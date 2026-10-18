@@ -16,6 +16,7 @@ public class BaseTest {
     @BeforeMethod
     public void setUp() throws Exception{
         playwright = Playwright.create();
+        boolean isHeadless = Boolean.parseBoolean(System.getProperty("headless", "true"));
         // Inside your BaseTest.java setUp() method:
         browser = playwright.chromium().launch(
                 new BrowserType.LaunchOptions().setHeadless(false) // Watch it live

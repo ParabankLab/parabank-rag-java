@@ -17,7 +17,7 @@ pipeline {
 
     post {
         always {
-            junit 'target/surefire-reports/*.xml'
+            // Generates and publishes the Allure Report on the Jenkins dashboard
             allure([
                 includeProperties: false,
                 jdk: '',
@@ -25,6 +25,12 @@ pipeline {
                 reportBuildPolicy: 'ALWAYS',
                 results: [[path: 'target/allure-results']]
             ])
+        }
+        success {
+            echo 'Pipeline passed successfully! 🚀'
+        }
+        failure {
+            echo 'Pipeline failed. Check the Allure report for details.'
         }
     }
 }
