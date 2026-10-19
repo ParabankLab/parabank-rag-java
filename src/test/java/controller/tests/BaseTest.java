@@ -20,16 +20,30 @@ public class BaseTest {
         threadPlaywright.set(playwright);
 
         // 2. Launch an independent browser for this thread
-        boolean isHeadless = Boolean.parseBoolean(System.getProperty("headless", "true"));
-        Browser browser = playwright.chromium().launch(
-                new BrowserType.LaunchOptions()
-                        .setHeadless(isHeadless)
-                        .setArgs(java.util.List.of(
-                                "--no-sandbox",
-                                "--disable-setuid-sandbox",
-                                "--disable-dev-shm-usage"
-                        ))
-        );
+        boolean isCI = System.getenv("JENKINS_URL") != null || Boolean.parseBoolean(System.getProperty("ci", "false"));
+
+        BrowserType.LaunchOptions options = new BrowserType.LaunchOptions()
+                .setHeadless(true)
+                .setArgs(java.util.List.of(
+                        "--no-sandbox",
+                        "--disable-setuid-sandbox",
+                        "--disable-dev-shm-usage",
+                        "--disable-gpu",
+                        "--remote-debugging-port=0" // Forces a fresh debugging socket pipe on CI
+                ));
+
+        // If running on Jenkins, apply the remote debugging port to bypass Windows service pipe restrictions
+        if (isCI) {
+            options.setArgs(java.util.List.of(
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-gpu",
+                    "--remote-debugging-port=0"
+            ));
+        }
+
+        Browser browser = playwright.chromium().launch(options);
         threadBrowser.set(browser);
 
         // 3. Create a fresh, isolated context and page for the test method
