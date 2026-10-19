@@ -4,6 +4,7 @@ import com.microsoft.playwright.*;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import view.pages.HomePage;
+import view.pages.OverviewPage;
 
 public class BaseTest {
     protected Playwright playwright;
@@ -12,6 +13,7 @@ public class BaseTest {
     protected BrowserContext context;
 
     protected HomePage homePage;
+    protected OverviewPage overViewPage;
 
     @BeforeMethod
     public void setUp() throws Exception{
@@ -30,6 +32,7 @@ public class BaseTest {
 
         //Page objects
         homePage = new HomePage(page);
+        overViewPage = new OverviewPage(page);
     }
 
     @AfterMethod
