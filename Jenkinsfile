@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        // Forces Playwright to use an accessible directory for browser binaries
+        PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}/ms-playwright"
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -10,7 +15,7 @@ pipeline {
 
         stage('Install Playwright Browsers') {
             steps {
-                // Use 'bat' if your Jenkins agent runs on Windows, or 'sh' if it runs on Linux/Docker
+                // Installs the binaries directly into the workspace-mapped path
                 bat 'mvn exec:java -Dexec.mainClass="com.microsoft.playwright.CLI" -Dexec.args="install"'
             }
         }
@@ -24,7 +29,6 @@ pipeline {
 
     post {
         always {
-            // Generates and publishes the Allure Report on the Jenkins dashboard
             allure([
                 includeProperties: false,
                 jdk: '',
