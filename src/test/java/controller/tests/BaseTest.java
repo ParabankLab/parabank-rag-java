@@ -9,11 +9,9 @@ import view.pages.HomePage;
 import view.pages.OverviewPage;
 
 public class BaseTest {
-    // ThreadLocal instances for process-level isolation
+    // ThreadLocal storage for process and session management
     private static ThreadLocal<Playwright> threadPlaywright = new ThreadLocal<>();
     private static ThreadLocal<Browser> threadBrowser = new ThreadLocal<>();
-
-    // ThreadLocal for per-test context and page isolation
     private static ThreadLocal<BrowserContext> threadContext = new ThreadLocal<>();
     private static ThreadLocal<Page> threadPage = new ThreadLocal<>();
 
@@ -22,7 +20,7 @@ public class BaseTest {
 
     @BeforeClass
     public void setUpClass() {
-        // Launch Playwright and Browser ONCE per thread/class
+        // Spin up Playwright and Browser ONCE per test class/thread
         Playwright playwright = Playwright.create();
         threadPlaywright.set(playwright);
 
@@ -32,21 +30,21 @@ public class BaseTest {
 
     @BeforeMethod
     public void setUp() {
-        // 1. Ensure Playwright exists for this thread
+        // Self-healing fallback: ensure Playwright and Browser exist for this thread
         if (threadPlaywright.get() == null) {
             threadPlaywright.set(Playwright.create());
         }
 
-        // 2. Ensure Browser exists for this thread (fallback safeguard)
         if (threadBrowser.get() == null) {
-            threadBrowser.set(threadPlaywright.get().chromium().launch(
+            Browser browser = threadPlaywright.get().chromium().launch(
                     new BrowserType.LaunchOptions().setHeadless(false)
-            ));
+            );
+            threadBrowser.set(browser);
         }
 
         Browser browser = threadBrowser.get();
 
-        // 3. Create fresh context and page for this specific test method
+        // Create a fresh, isolated context and page for EVERY test method
         BrowserContext context = browser.newContext(new Browser.NewContextOptions()
                 .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
                 .setIgnoreHTTPSErrors(true)
@@ -56,7 +54,7 @@ public class BaseTest {
         Page page = context.newPage();
         threadPage.set(page);
 
-        // 4. Initialize Page Objects
+        // Initialize Page Objects for the test
         homePage = new HomePage(page);
         overViewPage = new OverviewPage(page);
     }
@@ -78,7 +76,7 @@ public class BaseTest {
 
     @AfterClass
     public void tearDownClass() {
-        // Close browser and playwright when the thread finishes
+        // Close browser and playwright when the class finishes
         if (threadBrowser.get() != null) {
             try { threadBrowser.get().close(); } catch (Exception ignored) {}
             threadBrowser.remove();
