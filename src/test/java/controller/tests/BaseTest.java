@@ -12,19 +12,34 @@ public class BaseTest {
     private static ThreadLocal<BrowserContext> threadContext = new ThreadLocal<>();
     private static ThreadLocal<Page> threadPage = new ThreadLocal<>();
 
+    // Synchronization lock to prevent CI driver extraction race conditions
+    private static final Object initializationLock = new Object();
+
     @BeforeMethod
     public void setUp() {
         if (threadPlaywright.get() == null) {
-            Playwright playwright = Playwright.create();
-            threadPlaywright.set(playwright);
+            synchronized (initializationLock) {
+                // Double-checked locking to ensure safe, serialized driver extraction on CI
+                if (threadPlaywright.get() == null) {
+                    Playwright playwright = Playwright.create();
+                    threadPlaywright.set(playwright);
 
-            boolean isHeadless = Boolean.parseBoolean(System.getProperty("headless", "true"));
-            Browser browser = playwright.chromium().launch(
-                    new BrowserType.LaunchOptions().setHeadless(isHeadless)
-            );
-            threadBrowser.set(browser);
+                    boolean isHeadless = Boolean.parseBoolean(System.getProperty("headless", "true"));
+                    Browser browser = playwright.chromium().launch(
+                            new BrowserType.LaunchOptions()
+                                    .setHeadless(isHeadless)
+                                    .setArgs(java.util.List.of(
+                                            "--no-sandbox",
+                                            "--disable-setuid-sandbox",
+                                            "--disable-dev-shm-usage"
+                                    ))
+                    );
+                    threadBrowser.set(browser);
+                }
+            }
         }
 
+        // Fresh context and page per test method for absolute state isolation
         BrowserContext context = threadBrowser.get().newContext(new Browser.NewContextOptions()
                 .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
                 .setIgnoreHTTPSErrors(true)
@@ -39,7 +54,6 @@ public class BaseTest {
         return threadPage.get();
     }
 
-    // --- SENIOR INHERITANCE PATTERN: Protected Thread-Safe Getters ---
     protected HomePage homePage() {
         return new HomePage(getPage());
     }
