@@ -21,7 +21,7 @@ public class HomePage {
     }
 
     public void navigate(){
-        page.navigate(ParaBankUtils.PARABANK_URL);
+        page.navigate(ParaBankUtils.LOCAL_URL);
         // page.waitForURL(ParaBankUtils.PARABANK_URL);
     }
 
@@ -48,7 +48,7 @@ public class HomePage {
     }
 
     public boolean pageIsVisible(){
-       return this.page.url().equals(ParaBankUtils.PARABANK_URL);
+       return this.page.url().equals(ParaBankUtils.LOCAL_URL);
     }
 
 }
