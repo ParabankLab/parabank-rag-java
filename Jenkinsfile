@@ -8,6 +8,13 @@ pipeline {
             }
         }
 
+        stage('Install Playwright Browsers') {
+            steps {
+                // Use 'bat' if your Jenkins agent runs on Windows, or 'sh' if it runs on Linux/Docker
+                bat 'mvn exec:java -Dexec.mainClass="com.microsoft.playwright.CLI" -Dexec.args="install"'
+            }
+        }
+
         stage('Build & Test') {
             steps {
                 bat 'mvn clean test'
