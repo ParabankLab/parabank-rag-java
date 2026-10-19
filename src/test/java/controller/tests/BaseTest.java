@@ -7,60 +7,29 @@ import view.pages.HomePage;
 import view.pages.OverviewPage;
 
 public class BaseTest {
-    // ThreadLocal storage ensuring complete isolation per thread
-    private static ThreadLocal<Playwright> threadPlaywright = new ThreadLocal<>();
-    private static ThreadLocal<Browser> threadBrowser = new ThreadLocal<>();
-    private static ThreadLocal<BrowserContext> threadContext = new ThreadLocal<>();
-    private static ThreadLocal<Page> threadPage = new ThreadLocal<>();
+    protected Playwright playwright;
+    protected Browser browser;
+    protected BrowserContext context;
+    protected Page page;
 
     @BeforeMethod
     public void setUp() {
-        // 1. Create a brand-new Playwright instance strictly for this thread
-        Playwright playwright = Playwright.create();
-        threadPlaywright.set(playwright);
+        playwright = Playwright.create();
+        boolean isHeadless = Boolean.parseBoolean(System.getProperty("headless", "true"));
 
-        // 2. Launch an independent browser for this thread
-        boolean isCI = System.getenv("JENKINS_URL") != null || Boolean.parseBoolean(System.getProperty("ci", "false"));
-
-        BrowserType.LaunchOptions options = new BrowserType.LaunchOptions()
-                .setHeadless(true)
-                .setArgs(java.util.List.of(
-                        "--no-sandbox",
-                        "--disable-setuid-sandbox",
-                        "--disable-dev-shm-usage",
-                        "--disable-gpu",
-                        "--remote-debugging-port=0" // Forces a fresh debugging socket pipe on CI
-                ));
-
-        // If running on Jenkins, apply the remote debugging port to bypass Windows service pipe restrictions
-        if (isCI) {
-            options.setArgs(java.util.List.of(
-                    "--no-sandbox",
-                    "--disable-setuid-sandbox",
-                    "--disable-dev-shm-usage",
-                    "--disable-gpu",
-                    "--remote-debugging-port=0"
-            ));
-        }
-
-        Browser browser = playwright.chromium().launch(options);
-        threadBrowser.set(browser);
-
-        // 3. Create a fresh, isolated context and page for the test method
-        BrowserContext context = browser.newContext(new Browser.NewContextOptions()
-                .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
-                .setIgnoreHTTPSErrors(true)
+        browser = playwright.chromium().launch(
+                new BrowserType.LaunchOptions().setHeadless(isHeadless)
         );
-        threadContext.set(context);
 
-        Page page = context.newPage();
-        threadPage.set(page);
+        context = browser.newContext();
+        page = context.newPage();
     }
 
-    public static Page getPage() {
-        return threadPage.get();
+    public Page getPage() {
+        return page;
     }
 
+    // Clean protected getters for your Page Objects
     protected HomePage homePage() {
         return new HomePage(getPage());
     }
@@ -71,22 +40,17 @@ public class BaseTest {
 
     @AfterMethod
     public void tearDown() {
-        // Safely close and cleanup thread-local resources in reverse order
-        if (threadPage.get() != null) {
-            try { threadPage.get().close(); } catch (Exception ignored) {}
-            threadPage.remove();
+        if (page != null) {
+            try { page.close(); } catch (Exception ignored) {}
         }
-        if (threadContext.get() != null) {
-            try { threadContext.get().close(); } catch (Exception ignored) {}
-            threadContext.remove();
+        if (context != null) {
+            try { context.close(); } catch (Exception ignored) {}
         }
-        if (threadBrowser.get() != null) {
-            try { threadBrowser.get().close(); } catch (Exception ignored) {}
-            threadBrowser.remove();
+        if (browser != null) {
+            try { browser.close(); } catch (Exception ignored) {}
         }
-        if (threadPlaywright.get() != null) {
-            try { threadPlaywright.get().close(); } catch (Exception ignored) {}
-            threadPlaywright.remove();
+        if (playwright != null) {
+            try { playwright.close(); } catch (Exception ignored) {}
         }
     }
 }
