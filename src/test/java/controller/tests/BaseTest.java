@@ -24,7 +24,7 @@ public class BaseTest {
         Playwright playwright = Playwright.create();
         threadPlaywright.set(playwright);
 
-        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
         threadBrowser.set(browser);
     }
 
