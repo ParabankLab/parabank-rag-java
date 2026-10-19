@@ -3,6 +3,7 @@ package view.pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.WaitUntilState;
 import controller.util.ParaBankUtils;
 
 public class HomePage {
@@ -21,9 +22,13 @@ public class HomePage {
     }
 
     public void navigate(){
-        page.navigate(ParaBankUtils.LOCAL_URL);
-        // page.waitForURL(ParaBankUtils.PARABANK_URL);
+       /* page.navigate(ParaBankUtils.LOCAL_URL, new com.microsoft.playwright.Page.NavigateOptions()
+                .setWaitUntil(WaitUntilState.COMMIT)
+                .setTimeout(15000));*/
+        page.navigate(ParaBankUtils.PARABANK_URL);
     }
+
+
 
     public void login(String userName, String passWord){
         userNameInput.fill(userName);
@@ -48,7 +53,7 @@ public class HomePage {
     }
 
     public boolean pageIsVisible(){
-       return this.page.url().equals(ParaBankUtils.LOCAL_URL);
+       return this.page.url().equals(ParaBankUtils.PARABANK_URL);
     }
 
 }

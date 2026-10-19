@@ -3,6 +3,7 @@ package view.pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.WaitUntilState;
 import controller.util.ParaBankUtils;
 
 public class OverviewPage {
@@ -16,8 +17,11 @@ public class OverviewPage {
         this.accountLinks = page.getByRole( AriaRole.LINK, new Page.GetByRoleOptions().setName("Accounts Overview") );
     }
 
-    public void navigate(){
-        page.navigate(ParaBankUtils.OVERVIEW_URL);
+    public void navigate() {
+       // page.navigate(ParaBankUtils.OVERVIEW_URL);
+        page.navigate(ParaBankUtils.OVERVIEW_URL, new com.microsoft.playwright.Page.NavigateOptions()
+                .setWaitUntil(WaitUntilState.COMMIT)
+                .setTimeout(15000));
     }
 
     public boolean pageIsVisible(){

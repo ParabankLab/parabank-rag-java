@@ -1,50 +1,33 @@
 package controller.tests;
 
 import com.microsoft.playwright.*;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import view.pages.HomePage;
 import view.pages.OverviewPage;
 
 public class BaseTest {
-    // ThreadLocal storage for process and session management
+    // ThreadLocal storage ensuring complete isolation per thread
     private static ThreadLocal<Playwright> threadPlaywright = new ThreadLocal<>();
     private static ThreadLocal<Browser> threadBrowser = new ThreadLocal<>();
     private static ThreadLocal<BrowserContext> threadContext = new ThreadLocal<>();
     private static ThreadLocal<Page> threadPage = new ThreadLocal<>();
 
-    protected HomePage homePage;
-    protected OverviewPage overViewPage;
-
-    @BeforeClass
-    public void setUpClass() {
-        // Spin up Playwright and Browser ONCE per test class/thread
-        Playwright playwright = Playwright.create();
-        threadPlaywright.set(playwright);
-
-        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
-        threadBrowser.set(browser);
-    }
 
     @BeforeMethod
     public void setUp() {
-        // Self-healing fallback: ensure Playwright and Browser exist for this thread
-        if (threadPlaywright.get() == null) {
-            threadPlaywright.set(Playwright.create());
-        }
+        // 1. Create a brand-new Playwright instance strictly for this thread
+        Playwright playwright = Playwright.create();
+        threadPlaywright.set(playwright);
 
-        if (threadBrowser.get() == null) {
-            Browser browser = threadPlaywright.get().chromium().launch(
-                    new BrowserType.LaunchOptions().setHeadless(false)
-            );
-            threadBrowser.set(browser);
-        }
+        // 2. Launch browser on this thread
+        boolean isHeadless = Boolean.parseBoolean(System.getProperty("headless", "true"));
+        Browser browser = playwright.chromium().launch(
+                new BrowserType.LaunchOptions().setHeadless(isHeadless)
+        );
+        threadBrowser.set(browser);
 
-        Browser browser = threadBrowser.get();
-
-        // Create a fresh, isolated context and page for EVERY test method
+        // 3. Create a fresh, isolated context and page for the test method
         BrowserContext context = browser.newContext(new Browser.NewContextOptions()
                 .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
                 .setIgnoreHTTPSErrors(true)
@@ -54,29 +37,23 @@ public class BaseTest {
         Page page = context.newPage();
         threadPage.set(page);
 
-        // Initialize Page Objects for the test
-        homePage = new HomePage(page);
-        overViewPage = new OverviewPage(page);
-    }
+        }
+
     public static Page getPage() {
         return threadPage.get();
     }
 
     @AfterMethod
-    public void tearDownMethod() {
-        // Clean up only the context and page after each test method
+    public void tearDown() {
+        // Safely close and cleanup thread-local resources in reverse order
+        if (threadPage.get() != null) {
+            try { threadPage.get().close(); } catch (Exception ignored) {}
+            threadPage.remove();
+        }
         if (threadContext.get() != null) {
             try { threadContext.get().close(); } catch (Exception ignored) {}
             threadContext.remove();
         }
-        if (threadPage.get() != null) {
-            threadPage.remove();
-        }
-    }
-
-    @AfterClass
-    public void tearDownClass() {
-        // Close browser and playwright when the class finishes
         if (threadBrowser.get() != null) {
             try { threadBrowser.get().close(); } catch (Exception ignored) {}
             threadBrowser.remove();

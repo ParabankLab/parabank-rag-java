@@ -15,7 +15,7 @@ public class ParaBankUtils {
     public static final String PARA_USER = "john";
     public static final String PARA_PWD = "demo";
     public static final String LOCAL_URL = "http://127.0.0.1:8081/parabank/index.htm";
-    public static final String OVERVIEW_URL = "http://127.0.0.1:8081/parabank/overview.htm";
+    public static final String OVERVIEW_URL = "https://parabank.parasoft.com/parabank/overview.htm";
     private ParaBankUtils(){}
 
 
@@ -27,4 +27,6 @@ public class ParaBankUtils {
             throw new RuntimeException("Failed to parse JSON tree from: " + filePath, e);
         }
     }
+
+
 }
