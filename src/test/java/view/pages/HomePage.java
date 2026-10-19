@@ -16,7 +16,7 @@ public class HomePage {
         this.page = page;
         this.userNameInput = page.locator("input[name='username']");
         this.passwordInput = page.locator("input[name='password']");
-        this.loginButton = page.locator("input[name='Log In']");
+        this.loginButton = page.locator("input[type='submit'][value='Log In']");
         this.logoutLink = page.getByRole( AriaRole.LINK, new Page.GetByRoleOptions().setName("Log Out") );
     }
 

@@ -14,7 +14,6 @@ public class OverviewPage {
         this.page = page;
         this.accountsTable = page.locator("#accountTable");
         this.accountLinks = page.getByRole( AriaRole.LINK, new Page.GetByRoleOptions().setName("Accounts Overview") );
-
     }
 
     public void navigate(){
@@ -22,6 +21,7 @@ public class OverviewPage {
     }
 
     public boolean pageIsVisible(){
+        //System.out.println("Page is visible " + this.page.url());
         return this.page.url().equals(ParaBankUtils.OVERVIEW_URL);
     }
 

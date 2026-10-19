@@ -33,6 +33,10 @@ public class LoginTest extends BaseTest {
     @Description("Verify that a registered user can successfully log in.")
     @Severity(SeverityLevel.BLOCKER)
     void successfulLoginTest() {
+        Allure.step("Navigate to ParaBank home page", () -> {
+            homePage.navigate();
+        });
+
         Allure.step("Login to Parabank with valid credentials", () -> {
             homePage.login(node.get("user").get(0).get("name").asText(), node.get("user").get(0).get("password").asText());
         });
