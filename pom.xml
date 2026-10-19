@@ -65,7 +65,11 @@
                     <suiteXmlFiles>
                         <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
+                    <systemPropertyVariables>
+                        <headless>true</headless>
+                    </systemPropertyVariables>
                 </configuration>
+
                 <dependencies>
                     <!-- Explicitly bind TestNG provider to Surefire -->
                     <dependency>
