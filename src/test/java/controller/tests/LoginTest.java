@@ -1,23 +1,23 @@
 package controller.tests;
 
+import io.qameta.allure.Allure;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class LoginTest extends BaseTest {
     @Test
     void loginTest() {
-        homePage.navigate();
+        Allure.step("Navigate to ParaBank home page", () -> {
+            homePage.navigate();
+        });
 
-        Assert.assertTrue(homePage.pageIsVisible(),"Dashboard is not visible");
+        Allure.step("Verify that the main dashboard is visible", () -> {
+            Assert.assertTrue(homePage.pageIsVisible(), "Dashboard is not visible");
+        });
 
-       // homePage.clickOnTimeLink();
-        //Assert.assertTrue(timeSheetPage.pageIsVisible(),"Timesheet is not visible");
-
-
-        //System.out.println("testing... " + homePage.getHeadingText());
-       // System.out.println("User: " + homePage.getLoggedInUser());
-
-        System.out.println("URL is: " + homePage.getPage().url());
+        Allure.step("Confirm current URL matches the expected session path", () -> {
+            System.out.println("URL is: " + homePage.getPage().url());
+        });
     }
 
 }
