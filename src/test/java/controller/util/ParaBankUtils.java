@@ -10,12 +10,10 @@ public class ParaBankUtils {
 
     public static final String DASHBOARD = "Dashboard";
     public static final String TIMESHEET = "Timesheets";
-    public static final String URL = "https://opensource-demo.orangehrmlive.com/";
     public static final String PARABANK_URL = "https://parabank.parasoft.com/parabank/index.htm";
-    public static final String PARA_USER = "john";
-    public static final String PARA_PWD = "demo";
-    public static final String LOCAL_URL = "http://127.0.0.1:8081/parabank/index.htm";
-    public static final String OVERVIEW_URL = "https://parabank.parasoft.com/parabank/overview.htm";
+    public static final String BASE_URL = "http://127.0.0.1:8081/parabank/";
+    public static final String INDEX_URL = BASE_URL + "index.htm";
+    public static final String OVERVIEW_URL =  BASE_URL + "overview.htm";
     private ParaBankUtils(){}
 
 

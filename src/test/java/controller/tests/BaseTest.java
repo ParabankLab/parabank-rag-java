@@ -29,7 +29,6 @@ public class BaseTest {
         return page;
     }
 
-    // Clean protected getters for your Page Objects
     protected HomePage homePage() {
         return new HomePage(getPage());
     }

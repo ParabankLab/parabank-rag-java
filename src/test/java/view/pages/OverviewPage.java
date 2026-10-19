@@ -18,16 +18,10 @@ public class OverviewPage {
     }
 
     public void navigate() {
-       // page.navigate(ParaBankUtils.OVERVIEW_URL);
-        page.navigate(ParaBankUtils.OVERVIEW_URL, new com.microsoft.playwright.Page.NavigateOptions()
-                .setWaitUntil(WaitUntilState.COMMIT)
-                .setTimeout(15000));
+        page.navigate(ParaBankUtils.OVERVIEW_URL);
     }
 
     public boolean pageIsVisible(){
-        //System.out.println("Page is visible " + this.page.url());
         return this.page.url().equals(ParaBankUtils.OVERVIEW_URL);
     }
-
-
 }
