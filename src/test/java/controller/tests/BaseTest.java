@@ -17,9 +17,16 @@ public class BaseTest {
             Playwright playwright = Playwright.create();
             threadPlaywright.set(playwright);
 
-            boolean isHeadless = Boolean.parseBoolean(System.getProperty("headless", "true"));
+           // boolean isHeadless = Boolean.parseBoolean(System.getProperty("headless", "true"));
             Browser browser = playwright.chromium().launch(
-                    new BrowserType.LaunchOptions().setHeadless(isHeadless)
+                    new BrowserType.LaunchOptions()
+                            .setHeadless(true)
+                            .setArgs(java.util.List.of(
+                                    "--no-sandbox",
+                                    "--disable-setuid-sandbox",
+                                    "--disable-dev-shm-usage",
+                                    "--disable-gpu"
+                            ))
             );
             threadBrowser.set(browser);
         }
