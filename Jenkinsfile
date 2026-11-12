@@ -22,6 +22,7 @@ pipeline {
 
         stage('Build & Test') {
             steps {
+                bat 'if exist allure-results rmdir /s /q allure-results'
                 bat 'mvn clean test'
             }
         }
