@@ -1,9 +1,9 @@
-package view.pages;
+package com.playwright.framework.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
-import controller.util.ParaBankUtils;
+import com.playwright.framework.util.ParaBankUtils;
 
 public class HomePage {
     private Page page;

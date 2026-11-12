@@ -1,11 +1,11 @@
-package controller.tests;
+package tests;
 
 import io.qameta.allure.*;
 import io.qameta.allure.internal.shadowed.jackson.databind.JsonNode;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import static controller.util.ParaBankUtils.readJsonTree;
+import static com.playwright.framework.util.ParaBankUtils.readJsonTree;
 
 public class LoginTest extends BaseTest {
     private JsonNode node = readJsonTree("src/test/resources/data/testData.json");

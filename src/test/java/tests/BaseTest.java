@@ -1,10 +1,10 @@
-package controller.tests;
+package tests;
 
 import com.microsoft.playwright.*;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import view.pages.HomePage;
-import view.pages.OverviewPage;
+import com.playwright.framework.pages.HomePage;
+import com.playwright.framework.pages.OverviewPage;
 
 public class BaseTest {
     protected Playwright playwright;
