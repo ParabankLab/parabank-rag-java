@@ -39,14 +39,14 @@
   "transferAccountData": [
     {
       "id": 99999,
-      "fromAccountId": 13344,
+      "fromAccountId": "13344",
       "type": "SAVINGS",
-      "fromBalance": 1231.10,
-      "toBalance": 100.00,
+      "fromBalance": "1231.10",
+      "toBalance": "100.00",
       "transferAmount": 500.00,
-      "toAccountId": 13011,
+      "toAccountId": "13011",
       "totalSum": 1692.67,
-      "fromAfterTrBalance": 731.10,
+      "fromAfterTrBalance": "731.10",
       "toAfterTrBalance": "600.00"
     }
   ],

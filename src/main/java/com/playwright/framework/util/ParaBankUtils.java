@@ -1,5 +1,8 @@
 package com.playwright.framework.util;
 
+import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.FormData;
+import com.playwright.framework.pages.AdminPage;
 import io.qameta.allure.internal.shadowed.jackson.databind.JsonNode;
 import io.qameta.allure.internal.shadowed.jackson.databind.ObjectMapper;
 
@@ -14,6 +17,8 @@ public class ParaBankUtils {
     public static final String BASE_URL = "http://127.0.0.1:8081/parabank/";
     public static final String INDEX_URL = BASE_URL + "index.htm";
     public static final String OVERVIEW_URL =  BASE_URL + "overview.htm";
+    public static final String ADMIN_URL =  BASE_URL + "admin.htm";
+    public static final String TRANSFER_URL =  BASE_URL + "transfer.htm";
     private ParaBankUtils(){}
 
 
@@ -26,5 +31,10 @@ public class ParaBankUtils {
         }
     }
 
+    public static void cleanDBBeforeTests(Page page) {
+        AdminPage adminPage = new AdminPage(page);
+        adminPage.navigate();
+        adminPage.cleanAndInitDB();
+    }
 
 }
