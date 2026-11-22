@@ -1,8 +1,7 @@
 package tests;
 
 import com.microsoft.playwright.*;
-import com.playwright.framework.pages.HomePage;
-import com.playwright.framework.pages.OverviewPage;
+import com.playwright.framework.support.Annotations.Quarantine;
 import io.qameta.allure.*;
 import org.junit.jupiter.api.Order;
 import org.testng.Assert;
@@ -13,11 +12,12 @@ import java.math.BigDecimal;
 public class TransferTest extends BaseTest{
 
 
-    @Test
+
+
+    @Test(priority = 1)
     @Story("Checking balances before Transfer of funds")
     @Description("Checking balances before Transfer of funds")
     @Severity(SeverityLevel.NORMAL)
-    @Order(1)
     void checkAccountBalanceTest() {
           Allure.step("TC-POS-11 - Verify that  Overview page is visible", () -> {
             overviewPage().navigate();
@@ -38,11 +38,11 @@ public class TransferTest extends BaseTest{
 
 
     }
-    @Test
+    @Test(priority = 2)
     @Story("Successful Transfer of funds")
     @Description("Verify that a user can transfer money between accounts.")
     @Severity(SeverityLevel.NORMAL)
-    @Order(2)
+
     void transferAmountTest() {
         Allure.step("TC-POS-21 - Verify that Transfer page is visible", () -> {
             transferPage().navigate();
@@ -73,6 +73,20 @@ public class TransferTest extends BaseTest{
             String fromAccount = node.get("transferAccountData").get(0).get("fromAccountId").asText();
             BigDecimal fromBalance = overviewPage().getCellValue(fromAccount);
             Assert.assertTrue(fromBalance.toPlainString().equals(node.get("transferAccountData").get(0).get("fromAfterTrBalance").asText()), "Account Balances are not equal" );
+        });
+    }
+
+    @Test
+    @Quarantine(
+        reason = "Intermittent checkout modal timeout in CI",
+                ticket = "TC-POS-99",
+                owner = "sdet-team"
+            )
+    public void myFlakyTest(){
+        Allure.step("TC-POS-99 - My Flaky Test", () -> {
+           // String fromAccount = node.get("transferAccountData").get(0).get("fromAccountId").asText();
+           // BigDecimal fromBalance = overviewPage().getCellValue(fromAccount);
+            Assert.assertTrue(false, "Flaky Test ran" );
         });
     }
 
