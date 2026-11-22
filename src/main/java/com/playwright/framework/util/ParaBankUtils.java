@@ -31,10 +31,4 @@ public class ParaBankUtils {
         }
     }
 
-    public static void cleanDBBeforeTests(Page page) {
-        AdminPage adminPage = new AdminPage(page);
-        adminPage.navigate();
-        adminPage.cleanAndInitDB();
-    }
-
 }
